@@ -1,6 +1,6 @@
 #include <leveldb/db.h>
 #include <iostream>
-
+#include <string>
 
 
 using namespace std;
@@ -16,6 +16,35 @@ public:
     leveldb::Status status = leveldb::DB::Open(options, location, &db);
     assert(status.ok());
   }
+  int read() {
+    string cmd;
+    cin >> cmd;
+    if(cmd == "quit") return 0;
+    if(cmd == "put") {
+      string name;
+      string data;
+      cin >> name;
+      cin >> data;
+      db->Put(leveldb::WriteOptions(), name, data);
+    }else if(cmd == "get") {
+      string name;
+      cin >> name;
+      string ret;
+      if( db->Get(leveldb::ReadOptions(), name, &ret).ok() ) {
+	cout << ret << endl;
+      } else {
+	cout << "did not find key\n";
+      }
+    }else if(cmd == "delete") {
+      string name;
+      cin >> name;
+      if( db->Delete(leveldb::WriteOptions(), name).ok() ) {
+	cout << "key deleted\n";
+      }else{
+	cout << "failed to delete\n";
+      }
+    }
+  }
 };
 
 int main (int argc, char **argv) {
@@ -25,4 +54,8 @@ int main (int argc, char **argv) {
   }
 
   Control ctrl(argv[1]);
+
+  do {
+    cout << "> ";
+  } while(ctrl.read());
 }
