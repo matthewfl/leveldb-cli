@@ -43,6 +43,12 @@ public:
       }else{
 	cout << "failed to delete\n";
       }
+    }else if(cmd == "list") {
+      leveldb::Iterator* it = db->NewIterator(leveldb::ReadOptions());
+      for(it->SeekToFirst(); it->Valid(); it->Next()) {
+	cout << "\t" << it->key().ToString() << endl;
+      }
+      delete it;
     }
   }
 };
